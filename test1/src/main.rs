@@ -12,8 +12,8 @@ use drawing::*;
 fn main() -> Result<(), String> {
     /*************************/
 
-    let sdl_context = sdl2::init()?;
-    let video_subsystem = sdl_context.video()?;
+    let sdl_context = sdl2::init().unwrap();
+    let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
         .window("SDL2 Window", window_width, window_height)
@@ -24,9 +24,9 @@ fn main() -> Result<(), String> {
     let mut canvas = window
         .into_canvas()
         .build()
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| e.to_string()).unwrap();
 
-    let mut event_pump = sdl_context.event_pump()?;
+    let mut event_pump = sdl_context.event_pump().unwrap();
 
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -55,7 +55,7 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         for line in &road_dashed_lines() {
             for (p1, p2) in line {
-                canvas.draw_line(*p1, *p2)?;
+                canvas.draw_line(*p1, *p2).unwrap();
             }
         }
 
