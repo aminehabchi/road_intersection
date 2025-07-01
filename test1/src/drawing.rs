@@ -13,6 +13,18 @@ pub const vehicle_width: u32 = road_width / 2;
 pub const road_v: u32 = (window_width - road_width) / 2;
 pub const road_h: u32 = (window_height - road_width) / 2;
 
+pub fn started_points() -> Vec<Point> {
+    vec![
+        Point::new(road_v as i32, 0),
+        Point::new(
+            (road_v + vehicle_width) as i32,
+            (window_height - vehicle_width).try_into().unwrap()
+        ),
+        Point::new(0, (road_v + vehicle_width) as i32),
+        Point::new((window_width - vehicle_width).try_into().unwrap(), road_h as i32)
+    ]
+}
+
 pub fn road_lines() -> Vec<(Point, Point)> {
     vec![
         (Point::new(road_v as i32, 0), Point::new(road_v as i32, road_h as i32)),

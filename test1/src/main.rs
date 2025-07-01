@@ -9,6 +9,9 @@ use std::time::Duration;
 mod drawing;
 use drawing::*;
 
+mod vehicles;
+use vehicles::*;
+
 fn main() -> Result<(), String> {
     /*************************/
 
@@ -24,15 +27,38 @@ fn main() -> Result<(), String> {
     let mut canvas = window
         .into_canvas()
         .build()
-        .map_err(|e| e.to_string()).unwrap();
+        .map_err(|e| e.to_string())
+        .unwrap();
 
     let mut event_pump = sdl_context.event_pump().unwrap();
+    let mut traffic: Traffic = Traffic::new();
 
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running;
+                }
+                Event::KeyDown { keycode: Some(Keycode::R), .. } => {}
+                Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
+                    let vehicle: Vehicle = Vehicle::new(Color::RGB(255, 0, 0), Direction::Up);
+                    traffic.vehicles.push(vehicle);
+                    println!("{}", traffic.vehicles.len());
+                }
+                Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
+                    let vehicle: Vehicle = Vehicle::new(Color::RGB(255, 255, 0), Direction::Down);
+                    traffic.vehicles.push(vehicle);
+                    println!("{}", traffic.vehicles.len());
+                }
+                Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
+                    let vehicle: Vehicle = Vehicle::new(Color::RGB(0, 255, 0), Direction::Left);
+                    traffic.vehicles.push(vehicle);
+                    println!("{}", traffic.vehicles.len());
+                }
+                Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
+                    let vehicle: Vehicle = Vehicle::new(Color::RGB(0, 0, 255), Direction::Right);
+                    traffic.vehicles.push(vehicle);
+                    println!("{}", traffic.vehicles.len());
                 }
                 _ => {}
             }
@@ -41,12 +67,17 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
+        for v in &traffic.vehicles {
+            v.draw(&mut canvas);
+        }
+        traffic.move_all();
+
         // Draw road surface
         let road_rect = Rect::new(road_v as i32, road_h as i32, road_width, road_width);
         canvas.set_draw_color(Color::RGB(60, 60, 60));
         canvas.fill_rect(road_rect)?;
 
-        // Draw white road border lines
+        /**************************************/
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         for (p1, p2) in &road_lines() {
             canvas.draw_line(*p1, *p2)?;
@@ -58,6 +89,7 @@ fn main() -> Result<(), String> {
                 canvas.draw_line(*p1, *p2).unwrap();
             }
         }
+        /**************************************/
 
         canvas.present();
 
