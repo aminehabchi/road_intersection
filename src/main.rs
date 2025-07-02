@@ -1,11 +1,9 @@
 extern crate sdl2;
-use sdl2::rect::Point;
 use sdl2::rect::Rect;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
-use std::time::{ SystemTime, UNIX_EPOCH };
 use sdl2::video::Window;
 use sdl2::render::Canvas;
 
@@ -25,7 +23,7 @@ fn main() -> Result<(), String> {
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
-        .window("SDL2 Window", window_width, window_height)
+        .window("SDL2 Window", WINDOW_WIDTH, WINDOW_HEIGHT)
         .position_centered()
         .build()
         .map_err(|e| e.to_string())?;
@@ -39,7 +37,7 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump().unwrap();
     let mut traffic: Traffic = Traffic::new();
 
-    let mut delay: u128 = (vehicle_width * 16 + (vehicle_width / 4) * 16) as u128;
+    let delay: u128 = (VEHICLE_WIDTH * 16 + (VEHICLE_WIDTH / 4) * 16) as u128;
     let mut last_click: [u128; 4] = [0, 0, 0, 0];
 
     'running: loop {
@@ -50,7 +48,7 @@ fn main() -> Result<(), String> {
                 }
                 Event::KeyDown { keycode: Some(Keycode::R), .. } => {}
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
-                    if now_in_millis() - last_click[0] > delay && traffic.nbr_waiting_vehicle.0 < 2 {
+                    if now_in_millis() - last_click[0] > delay && traffic.nbr_waiting_vehicle.0 < 6 {
                         traffic.nbr_waiting_vehicle.0 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Up);
                         traffic.vehicles.push(vehicle);
@@ -58,7 +56,7 @@ fn main() -> Result<(), String> {
                     }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
-                    if now_in_millis() - last_click[1] > delay && traffic.nbr_waiting_vehicle.1 < 2 {
+                    if now_in_millis() - last_click[1] > delay && traffic.nbr_waiting_vehicle.1 < 6 {
                         traffic.nbr_waiting_vehicle.1 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Down);
                         traffic.vehicles.push(vehicle);
@@ -66,7 +64,7 @@ fn main() -> Result<(), String> {
                     }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
-                    if now_in_millis() - last_click[2] > delay && traffic.nbr_waiting_vehicle.2 < 2 {
+                    if now_in_millis() - last_click[2] > delay && traffic.nbr_waiting_vehicle.2 < 6 {
                         traffic.nbr_waiting_vehicle.2 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Left);
                         traffic.vehicles.push(vehicle);
@@ -74,7 +72,7 @@ fn main() -> Result<(), String> {
                     }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
-                    if now_in_millis() - last_click[3] > delay && traffic.nbr_waiting_vehicle.3 < 2 {
+                    if now_in_millis() - last_click[3] > delay && traffic.nbr_waiting_vehicle.3 < 6 {
                         traffic.nbr_waiting_vehicle.3 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Right);
                         traffic.vehicles.push(vehicle);
@@ -84,15 +82,14 @@ fn main() -> Result<(), String> {
                 _ => {}
             }
         }
-        println!("{:?}", traffic.nbr_waiting_vehicle);
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
         for v in &traffic.vehicles {
-            v.draw(&mut canvas);
+            v.draw(&mut canvas).unwrap();
         }
 
-        draw_lights(&traffic.light, &mut canvas);
+        draw_lights(&traffic.light, &mut canvas).unwrap();
         traffic.move_all();
         /**************************************/
         canvas.set_draw_color(Color::RGB(255, 255, 255));
@@ -122,10 +119,10 @@ pub fn draw_lights(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let light_size: u32 = 50;
     let lights_position = vec![
-        (Direction::Up, road_h - light_size, road_v - light_size),
-        (Direction::Right, window_width - road_h, road_v - light_size),
-        (Direction::Down, window_width - road_h, window_height - road_v),
-        (Direction::Left, road_h - light_size, window_height - road_v)
+        (Direction::Up, ROAD_H - light_size, ROAD_V - light_size),
+        (Direction::Right, WINDOW_WIDTH - ROAD_H, ROAD_V - light_size),
+        (Direction::Down, WINDOW_WIDTH - ROAD_H, WINDOW_HEIGHT - ROAD_V),
+        (Direction::Left, ROAD_H - light_size, WINDOW_HEIGHT - ROAD_V)
     ];
     for pos in lights_position {
         let rect = Rect::new(

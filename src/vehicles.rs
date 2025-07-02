@@ -7,7 +7,6 @@ use crate::drawing::*;
 use crate::helprs::*;
 
 pub struct Vehicle {
-    pub id: u128,
     pub color: Color,
     pub x: i32,
     pub y: i32,
@@ -37,18 +36,18 @@ impl Vehicle {
         match dir {
             Direction::Up => {
                 x = started_points[0].x;
-                y = started_points[0].y - (vehicle_width as i32);
+                y = started_points[0].y - (VEHICLE_WIDTH as i32);
             }
             Direction::Down => {
                 x = started_points[1].x;
-                y = started_points[1].y + (vehicle_width as i32);
+                y = started_points[1].y + (VEHICLE_WIDTH as i32);
             }
             Direction::Right => {
-                x = started_points[3].x + (vehicle_width as i32);
+                x = started_points[3].x + (VEHICLE_WIDTH as i32);
                 y = started_points[3].y;
             }
             Direction::Left => {
-                x = started_points[2].x - (vehicle_width as i32);
+                x = started_points[2].x - (VEHICLE_WIDTH as i32);
                 y = started_points[2].y;
             }
         }
@@ -71,7 +70,6 @@ impl Vehicle {
             _ => {}
         }
         Vehicle {
-            id: now_in_millis(),
             color,
             x,
             y,
@@ -81,7 +79,7 @@ impl Vehicle {
     }
 
     pub fn draw(&self, canvas: &mut Canvas<Window>) -> Result<(), Box<dyn std::error::Error>> {
-        let rect = Rect::new(self.x, self.y, vehicle_width, vehicle_width);
+        let rect = Rect::new(self.x, self.y, VEHICLE_WIDTH, VEHICLE_WIDTH);
 
         canvas.set_draw_color(self.color);
         canvas.fill_rect(rect)?;
@@ -110,95 +108,74 @@ impl Traffic {
     }
     pub fn move_all(&mut self) {
         let mut last_vehicle_pos = (0, 0, 0, 0);
-        let safe_distance: i32 = ((vehicle_width as f64) * 1.2) as i32;
 
         for vehicle in &mut self.vehicles {
             match vehicle.dir {
                 Direction::Down => {
-                    if vehicle.y == (window_height - road_h).try_into().unwrap() {
+                    if vehicle.y == (WINDOW_HEIGHT - ROAD_H).try_into().unwrap() {
                         match &self.light {
-                            Some(light) => {}
+                            Some(_) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
                                 self.nbr_waiting_vehicle.1 -= 1;
                                 vehicle.movee(0, -1);
                             }
                         }
-                    } else {
-                        if
-                            last_vehicle_pos.0 == 0 ||
-                            ((last_vehicle_pos.0 as f32) - (vehicle.y as f32)).abs() >
-                                (safe_distance as f32)
-                        {
-                            handle_move_down(vehicle, &mut self.light);
-                        }
+                    } else if check_safe_distance(vehicle.y, last_vehicle_pos.0) {
+                        handle_move_down(vehicle, &mut self.light);
                     }
                     last_vehicle_pos.0 = vehicle.y;
                 }
                 Direction::Up => {
-                    if vehicle.y + (vehicle_width as i32) == road_h.try_into().unwrap() {
+                    if vehicle.y + (VEHICLE_WIDTH as i32) == ROAD_H.try_into().unwrap() {
                         match &self.light {
-                            Some(light) => {}
+                            Some(_) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
                                 self.nbr_waiting_vehicle.0 -= 1;
                                 vehicle.movee(0, 1);
                             }
                         }
-                    } else {
-                        if
-                            last_vehicle_pos.1 == 0 ||
-                            ((last_vehicle_pos.1 as f32) - (vehicle.y as f32)).abs() >
-                                (safe_distance as f32)
-                        {
-                            handle_move_up(vehicle, &mut self.light);
-                        }
+                    } else if check_safe_distance(vehicle.y, last_vehicle_pos.1) {
+                        handle_move_up(vehicle, &mut self.light);
                     }
                     last_vehicle_pos.1 = vehicle.y;
                 }
                 Direction::Right => {
-                    if vehicle.x == (window_width - road_h).try_into().unwrap() {
+                    if vehicle.x == (WINDOW_WIDTH - ROAD_H).try_into().unwrap() {
                         match &self.light {
-                            Some(light) => {}
+                            Some(_) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
                                 self.nbr_waiting_vehicle.3 -= 1;
                                 vehicle.movee(-1, 0);
                             }
                         }
-                    } else {
-                        if
-                            last_vehicle_pos.2 == 0 ||
-                            ((last_vehicle_pos.2 as f32) - (vehicle.x as f32)).abs() >
-                                (safe_distance as f32)
-                        {
-                            handle_move_rigth(vehicle, &mut self.light);
-                        }
+                    } else if check_safe_distance(vehicle.x, last_vehicle_pos.2) {
+                        handle_move_rigth(vehicle, &mut self.light);
                     }
                     last_vehicle_pos.2 = vehicle.x;
                 }
                 Direction::Left => {
-                    if vehicle.x + (vehicle_width as i32) == road_h.try_into().unwrap() {
+                    if vehicle.x + (VEHICLE_WIDTH as i32) == ROAD_H.try_into().unwrap() {
                         match &self.light {
-                            Some(light) => {}
+                            Some(_) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
                                 self.nbr_waiting_vehicle.2 -= 1;
                                 vehicle.movee(1, 0);
                             }
                         }
-                    } else {
-                        if
-                            last_vehicle_pos.3 == 0 ||
-                            ((last_vehicle_pos.3 as f32) - (vehicle.x as f32)).abs() >
-                                (safe_distance as f32)
-                        {
-                            handle_move_left(vehicle, &mut self.light);
-                        }
+                    } else if check_safe_distance(vehicle.x, last_vehicle_pos.3) {
+                        handle_move_left(vehicle, &mut self.light);
                     }
                     last_vehicle_pos.3 = vehicle.x;
                 }
             }
         }
     }
+}
+
+fn check_safe_distance(current: i32, last: i32) -> bool {
+    last == 0 || ((last as f32) - (current as f32)).abs() > (SAFE_DISTANCE as f32)
 }

@@ -3,7 +3,7 @@ use std::time::{ SystemTime, UNIX_EPOCH };
 use crate::vehicles::*;
 use crate::drawing::*;
 
-pub const MIDILTE_POINT: (i32, i32) = ((window_width as i32) / 2, (window_height as i32) / 2);
+pub const MIDILTE_POINT: (i32, i32) = ((WINDOW_WIDTH as i32) / 2, (WINDOW_HEIGHT as i32) / 2);
 
 pub fn random_between(min: i32, max: i32) -> i32 {
     let mut rng = rand::thread_rng();
@@ -28,7 +28,7 @@ pub fn handle_move_rigth(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             }
         }
         Towards::Right => {
-            if MIDILTE_POINT.0 - (vehicle_width as i32) == ((vehicle.x - 1) as i32) {
+            if MIDILTE_POINT.0 - (VEHICLE_WIDTH as i32) == ((vehicle.x - 1) as i32) {
                 vehicle.dir = Direction::Up;
                 vehicle.toward = Towards::Forward;
             } else {
@@ -36,7 +36,7 @@ pub fn handle_move_rigth(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             }
         }
         Towards::Forward => {
-            if vehicle.x + (vehicle_width as i32) == road_h.try_into().unwrap() {
+            if vehicle.x + (VEHICLE_WIDTH as i32) == ROAD_H.try_into().unwrap() {
                 *light = None;
             }
             // if vehicle.y + (vehicle_width as i32) == road_v.try_into().unwrap() {
@@ -53,7 +53,7 @@ pub fn handle_move_rigth(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
 pub fn handle_move_left(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
     match vehicle.toward {
         Towards::Left => {
-            if MIDILTE_POINT.0 - (vehicle_width as i32) == ((vehicle.x - 1) as i32) {
+            if MIDILTE_POINT.0 - (VEHICLE_WIDTH as i32) == ((vehicle.x - 1) as i32) {
                 vehicle.dir = Direction::Up;
                 vehicle.toward = Towards::Forward;
             } else {
@@ -69,7 +69,7 @@ pub fn handle_move_left(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             }
         }
         Towards::Forward => {
-            if vehicle.x == (window_width - road_h).try_into().unwrap() {
+            if vehicle.x == (WINDOW_WIDTH - ROAD_H).try_into().unwrap() {
                 *light = None;
             }
             vehicle.movee(1, 0);
@@ -88,7 +88,7 @@ pub fn handle_move_down(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             }
         }
         Towards::Right => {
-            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y - 1) as i32) {
+            if MIDILTE_POINT.1 - (VEHICLE_WIDTH as i32) == ((vehicle.y - 1) as i32) {
                 vehicle.dir = Direction::Right;
                 vehicle.toward = Towards::Forward;
             } else {
@@ -96,7 +96,7 @@ pub fn handle_move_down(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             }
         }
         Towards::Forward => {
-            if vehicle.y + (vehicle_width as i32) == road_h.try_into().unwrap() {
+            if vehicle.y + (VEHICLE_WIDTH as i32) == ROAD_H.try_into().unwrap() {
                 *light = None;
             }
             vehicle.movee(0, -1);
@@ -107,7 +107,7 @@ pub fn handle_move_down(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
 pub fn handle_move_up(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
     match vehicle.toward {
         Towards::Left => {
-            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y - 1) as i32) {
+            if MIDILTE_POINT.1 - (VEHICLE_WIDTH as i32) == ((vehicle.y - 1) as i32) {
                 vehicle.dir = Direction::Right;
                 vehicle.toward = Towards::Forward;
             } else {
@@ -123,7 +123,7 @@ pub fn handle_move_up(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             }
         }
         Towards::Forward => {
-            if vehicle.y == (window_height - road_h).try_into().unwrap() {
+            if vehicle.y == (WINDOW_HEIGHT - ROAD_H).try_into().unwrap() {
                 *light = None;
             }
             vehicle.movee(0, 1);

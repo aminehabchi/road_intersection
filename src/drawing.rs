@@ -1,60 +1,56 @@
 extern crate sdl2;
 use sdl2::rect::Point;
-use sdl2::rect::Rect;
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
-use std::time::Duration;
 
-pub const window_width: u32 = 800;
-pub const window_height: u32 = 800;
-pub const road_width: u32 = 200;
-pub const vehicle_width: u32 = road_width / 2;
-pub const road_v: u32 = (window_width - road_width) / 2;
-pub const road_h: u32 = (window_height - road_width) / 2;
+pub const WINDOW_WIDTH: u32 = 800;
+pub const WINDOW_HEIGHT: u32 = 800;
+pub const ROAD_WIDTH: u32 = 100;
+pub const VEHICLE_WIDTH: u32 = ROAD_WIDTH / 2;
+pub const ROAD_V: u32 = (WINDOW_WIDTH - ROAD_WIDTH) / 2;
+pub const ROAD_H: u32 = (WINDOW_HEIGHT - ROAD_WIDTH) / 2;
+pub const SAFE_DISTANCE: i32 = ((VEHICLE_WIDTH as f64) * 1.2) as i32;
 
 pub fn started_points() -> Vec<Point> {
     vec![
-        Point::new(road_v as i32, 0),
+        Point::new(ROAD_V as i32, 0),
         Point::new(
-            (road_v + vehicle_width) as i32,
-            (window_height - vehicle_width).try_into().unwrap()
+            (ROAD_V + VEHICLE_WIDTH) as i32,
+            (WINDOW_HEIGHT - VEHICLE_WIDTH).try_into().unwrap()
         ),
-        Point::new(0, (road_v + vehicle_width) as i32),
-        Point::new((window_width - vehicle_width).try_into().unwrap(), road_h as i32)
+        Point::new(0, (ROAD_V + VEHICLE_WIDTH) as i32),
+        Point::new((WINDOW_WIDTH - VEHICLE_WIDTH).try_into().unwrap(), ROAD_H as i32)
     ]
 }
 
 pub fn road_lines() -> Vec<(Point, Point)> {
     vec![
-        (Point::new(road_v as i32, 0), Point::new(road_v as i32, road_h as i32)),
+        (Point::new(ROAD_V as i32, 0), Point::new(ROAD_V as i32, ROAD_H as i32)),
         (
-            Point::new((road_v + road_width) as i32, 0),
-            Point::new((road_v + road_width) as i32, road_h as i32),
+            Point::new((ROAD_V + ROAD_WIDTH) as i32, 0),
+            Point::new((ROAD_V + ROAD_WIDTH) as i32, ROAD_H as i32),
         ),
         /*****************************/
         (
-            Point::new((road_v + road_width) as i32, (road_h + road_width) as i32),
-            Point::new((road_v + road_width) as i32, window_height as i32),
+            Point::new((ROAD_V + ROAD_WIDTH) as i32, (ROAD_H + ROAD_WIDTH) as i32),
+            Point::new((ROAD_V + ROAD_WIDTH) as i32, WINDOW_HEIGHT as i32),
         ),
         (
-            Point::new(road_v as i32, (road_h + road_width) as i32),
-            Point::new(road_v as i32, window_height as i32),
-        ),
-        /*****************************/
-        (Point::new(0, road_h as i32), Point::new(road_v as i32, road_h as i32)),
-        (
-            Point::new(0, (road_h + road_width) as i32),
-            Point::new(road_v as i32, (road_h + road_width) as i32),
+            Point::new(ROAD_V as i32, (ROAD_H + ROAD_WIDTH) as i32),
+            Point::new(ROAD_V as i32, WINDOW_HEIGHT as i32),
         ),
         /*****************************/
+        (Point::new(0, ROAD_H as i32), Point::new(ROAD_V as i32, ROAD_H as i32)),
         (
-            Point::new((window_width - road_v) as i32, road_h as i32),
-            Point::new(window_width as i32, road_h as i32),
+            Point::new(0, (ROAD_H + ROAD_WIDTH) as i32),
+            Point::new(ROAD_V as i32, (ROAD_H + ROAD_WIDTH) as i32),
+        ),
+        /*****************************/
+        (
+            Point::new((WINDOW_WIDTH - ROAD_V) as i32, ROAD_H as i32),
+            Point::new(WINDOW_WIDTH as i32, ROAD_H as i32),
         ),
         (
-            Point::new((window_width - road_v) as i32, (road_h + road_width) as i32),
-            Point::new(window_width as i32, (road_h + road_width) as i32),
+            Point::new((WINDOW_WIDTH - ROAD_V) as i32, (ROAD_H + ROAD_WIDTH) as i32),
+            Point::new(WINDOW_WIDTH as i32, (ROAD_H + ROAD_WIDTH) as i32),
         )
     ]
 }
@@ -62,28 +58,28 @@ pub fn road_lines() -> Vec<(Point, Point)> {
 pub fn road_dashed_lines() -> Vec<Vec<(Point, Point)>> {
     vec![
         create_dashed_line(
-            (window_width / 2).try_into().unwrap(),
+            (WINDOW_WIDTH / 2).try_into().unwrap(),
             0,
-            (window_width / 2).try_into().unwrap(),
-            road_h.try_into().unwrap()
+            (WINDOW_WIDTH / 2).try_into().unwrap(),
+            ROAD_H.try_into().unwrap()
         ),
         create_dashed_line(
-            (window_width / 2).try_into().unwrap(),
-            (road_h + road_width).try_into().unwrap(),
-            (window_width / 2).try_into().unwrap(),
-            window_height.try_into().unwrap()
+            (WINDOW_WIDTH / 2).try_into().unwrap(),
+            (ROAD_H + ROAD_WIDTH).try_into().unwrap(),
+            (WINDOW_WIDTH / 2).try_into().unwrap(),
+            WINDOW_HEIGHT.try_into().unwrap()
         ),
         create_dashed_line(
             0,
-            (window_height / 2).try_into().unwrap(),
-            road_h.try_into().unwrap(),
-            (window_height / 2).try_into().unwrap()
+            (WINDOW_HEIGHT / 2).try_into().unwrap(),
+            ROAD_H.try_into().unwrap(),
+            (WINDOW_HEIGHT / 2).try_into().unwrap()
         ),
         create_dashed_line(
-            (window_width - road_h).try_into().unwrap(), //x1
-            (window_height / 2).try_into().unwrap(), //y1
-            window_width.try_into().unwrap(),
-            (window_height / 2).try_into().unwrap()
+            (WINDOW_WIDTH - ROAD_H).try_into().unwrap(), //x1
+            (WINDOW_HEIGHT / 2).try_into().unwrap(), //y1
+            WINDOW_WIDTH.try_into().unwrap(),
+            (WINDOW_HEIGHT / 2).try_into().unwrap()
         )
     ]
 }
@@ -121,5 +117,3 @@ pub fn create_dashed_line(x1: i32, y1: i32, x2: i32, y2: i32) -> Vec<(Point, Poi
 
     segments
 }
-
-
