@@ -6,6 +6,8 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
 use std::time::{ SystemTime, UNIX_EPOCH };
+use sdl2::video::Window;
+use sdl2::render::Canvas;
 
 mod drawing;
 use drawing::*;
@@ -15,13 +17,6 @@ use vehicles::*;
 
 mod helprs;
 use helprs::*;
-
-fn now_in_millis() -> u128 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("System time before UNIX EPOCH!")
-        .as_millis()
-}
 
 fn main() -> Result<(), String> {
     /*************************/
@@ -92,8 +87,9 @@ fn main() -> Result<(), String> {
         for v in &traffic.vehicles {
             v.draw(&mut canvas);
         }
-        traffic.move_all();
 
+        draw_lights(&traffic.light, &mut canvas);
+        traffic.move_all();
         /**************************************/
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         for (p1, p2) in &road_lines() {
@@ -113,5 +109,33 @@ fn main() -> Result<(), String> {
         std::thread::sleep(Duration::from_millis(16));
     }
 
+    Ok(())
+}
+
+pub fn draw_lights(
+    lights: &Option<Direction>,
+    canvas: &mut Canvas<Window>
+) -> Result<(), Box<dyn std::error::Error>> {
+    let light_size: u32 = 50;
+    let lights_position = vec![
+        (Direction::Up, road_h - light_size, road_v - light_size),
+        (Direction::Right, window_width - road_h, road_v - light_size),
+        (Direction::Down, window_width - road_h, window_height - road_v),
+        (Direction::Left, road_h - light_size, window_height - road_v)
+    ];
+    for pos in lights_position {
+        let rect = Rect::new(
+            pos.1.try_into().unwrap(),
+            pos.2.try_into().unwrap(),
+            light_size,
+            light_size
+        );
+        if Some(pos.0) == *lights {
+            canvas.set_draw_color(Color::RGB(0, 255, 0)); //green
+        } else {
+            canvas.set_draw_color(Color::RGB(255, 0, 0)); //red
+        }
+        canvas.fill_rect(rect)?;
+    }
     Ok(())
 }

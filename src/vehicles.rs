@@ -6,9 +6,8 @@ use sdl2::rect::Rect;
 use crate::drawing::*;
 use crate::helprs::*;
 
-const MIDILTE_POINT: (i32, i32) = ((window_width as i32) / 2, (window_height as i32) / 2);
-
 pub struct Vehicle {
+    pub id: u128,
     pub color: Color,
     pub x: i32,
     pub y: i32,
@@ -22,6 +21,7 @@ pub enum Towards {
     Left,
 }
 
+#[derive(Clone, PartialEq, Debug)]
 pub enum Direction {
     Up,
     Down,
@@ -71,6 +71,7 @@ impl Vehicle {
             _ => {}
         }
         Vehicle {
+            id: now_in_millis(),
             color,
             x,
             y,
@@ -95,107 +96,69 @@ impl Vehicle {
 
 pub struct Traffic {
     pub vehicles: Vec<Vehicle>,
+    pub light: Option<Direction>,
 }
 
 impl Traffic {
     pub fn new() -> Self {
         Traffic {
             vehicles: vec![],
+            light: None,
         }
     }
     pub fn move_all(&mut self) {
         for vehicle in &mut self.vehicles {
             match vehicle.dir {
                 Direction::Down => {
-                    match vehicle.toward {
-                        Towards::Left => {
-                            if MIDILTE_POINT.1 == ((vehicle.y - 1) as i32) {
-                                vehicle.dir = Direction::Left;
-                                vehicle.toward = Towards::Forward;
-                            } else {
+                    if vehicle.y == (window_height - road_h).try_into().unwrap() {
+                        match &self.light {
+                            Some(light) => {}
+                            None => {
+                                self.light = Some(vehicle.dir.clone());
                                 vehicle.movee(0, -1);
                             }
                         }
-                        Towards::Right => {
-                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y - 1) as i32) {
-                                vehicle.dir = Direction::Right;
-                                vehicle.toward = Towards::Forward;
-                            } else {
-                                vehicle.movee(0, -1);
-                            }
-                        }
-                        Towards::Forward => {
-                            vehicle.movee(0, -1);
-                        }
+                    } else {
+                        handle_move_down(vehicle, &mut self.light);
                     }
                 }
                 Direction::Up => {
-                    match vehicle.toward {
-                        Towards::Left => {
-                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y - 1) as i32) {
-                                vehicle.dir = Direction::Right;
-                                vehicle.toward = Towards::Forward;
-                            } else {
+                    if vehicle.y + (vehicle_width as i32) == road_h.try_into().unwrap() {
+                        match &self.light {
+                            Some(light) => {}
+                            None => {
+                                self.light = Some(vehicle.dir.clone());
                                 vehicle.movee(0, 1);
                             }
                         }
-                        Towards::Right => {
-                            if MIDILTE_POINT.1 == ((vehicle.y - 1) as i32) {
-                                vehicle.dir = Direction::Left;
-                                vehicle.toward = Towards::Forward;
-                            } else {
-                                vehicle.movee(0, 1);
-                            }
-                        }
-                        Towards::Forward => {
-                            vehicle.movee(0, 1);
-                        }
+                    } else {
+                        handle_move_up(vehicle, &mut self.light);
                     }
                 }
                 Direction::Right => {
-                    match vehicle.toward {
-                        Towards::Left => {
-                            if MIDILTE_POINT.1 == ((vehicle.x - 1) as i32) {
-                                vehicle.dir = Direction::Down;
-                                vehicle.toward = Towards::Forward;
-                            } else {
+                    if vehicle.x == (window_width - road_h).try_into().unwrap() {
+                        match &self.light {
+                            Some(light) => {}
+                            None => {
+                                self.light = Some(vehicle.dir.clone());
                                 vehicle.movee(-1, 0);
                             }
                         }
-                        Towards::Right => {
-                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.x - 1) as i32) {
-                                vehicle.dir = Direction::Up;
-                                vehicle.toward = Towards::Forward;
-                            } else {
-                                vehicle.movee(-1, 0);
-                            }
-                        }
-                        Towards::Forward => {
-                            vehicle.movee(-1, 0);
-                        }
+                    } else {
+                        handle_move_rigth(vehicle, &mut self.light);
                     }
                 }
                 Direction::Left => {
-                    match vehicle.toward {
-                        Towards::Left => {
-                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.x - 1) as i32) {
-                                vehicle.dir = Direction::Up;
-                                vehicle.toward = Towards::Forward;
-                            } else {
+                    if vehicle.x + (vehicle_width as i32) == road_h.try_into().unwrap() {
+                        match &self.light {
+                            Some(light) => {}
+                            None => {
+                                self.light = Some(vehicle.dir.clone());
                                 vehicle.movee(1, 0);
                             }
                         }
-                        Towards::Right => {
-                            if MIDILTE_POINT.1 == ((vehicle.x - 1) as i32) {
-                                vehicle.dir = Direction::Down;
-                                vehicle.toward = Towards::Forward;
-                            } else {
-                                vehicle.movee(1, 0);
-                            }
-                        }
-                        Towards::Forward => {
-                            vehicle.movee(1, 0);
-                        }
+                    } else {
+                        handle_move_left(vehicle, &mut self.light);
                     }
                 }
             }
