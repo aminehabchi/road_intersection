@@ -44,11 +44,11 @@ fn main() -> Result<(), String> {
                 }
                 Event::KeyDown { keycode: Some(Keycode::R), .. } => {}
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
-                    let vehicle: Vehicle = Vehicle::new(Direction::Down);
+                    let vehicle: Vehicle = Vehicle::new(Direction::Up);
                     traffic.vehicles.push(vehicle);
                 }
                 Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
-                    let vehicle: Vehicle = Vehicle::new(Direction::Up);
+                    let vehicle: Vehicle = Vehicle::new(Direction::Down);
                     traffic.vehicles.push(vehicle);
                 }
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {

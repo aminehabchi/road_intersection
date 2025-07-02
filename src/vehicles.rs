@@ -36,12 +36,12 @@ impl Vehicle {
         let mut y = 0;
         match dir {
             Direction::Up => {
-                x = started_points[1].x;
-                y = started_points[1].y;
-            }
-            Direction::Down => {
                 x = started_points[0].x;
                 y = started_points[0].y;
+            }
+            Direction::Down => {
+                x = started_points[1].x;
+                y = started_points[1].y;
             }
             Direction::Right => {
                 x = started_points[3].x;
@@ -113,34 +113,11 @@ impl Traffic {
                                 vehicle.dir = Direction::Left;
                                 vehicle.toward = Towards::Forward;
                             } else {
-                                vehicle.movee(0, 1);
-                            }
-                        }
-                        Towards::Right => {
-                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y - 1) as i32) {
-                                vehicle.dir = Direction::Right;
-                                vehicle.toward = Towards::Forward;
-                            } else {
-                                vehicle.movee(0, 1);
-                            }
-                        }
-                        Towards::Forward => {
-                            vehicle.movee(0, 1);
-                        }
-                    }
-                }
-                Direction::Up => {
-                    match vehicle.toward {
-                        Towards::Left => {
-                            if MIDILTE_POINT.1 == ((vehicle.y + 1) as i32) {
-                                vehicle.dir = Direction::Left;
-                                vehicle.toward = Towards::Forward;
-                            } else {
                                 vehicle.movee(0, -1);
                             }
                         }
                         Towards::Right => {
-                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y + 1) as i32) {
+                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y - 1) as i32) {
                                 vehicle.dir = Direction::Right;
                                 vehicle.toward = Towards::Forward;
                             } else {
@@ -152,18 +129,43 @@ impl Traffic {
                         }
                     }
                 }
+                Direction::Up => {
+                    match vehicle.toward {
+                        Towards::Left => {
+                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.y - 1) as i32) {
+                                vehicle.dir = Direction::Right;
+                                vehicle.toward = Towards::Forward;
+                            } else {
+                                vehicle.movee(0, 1);
+                            }
+                        }
+                        Towards::Right => {
+                            if MIDILTE_POINT.1 == ((vehicle.y - 1) as i32) {
+                                vehicle.dir = Direction::Left;
+                                vehicle.toward = Towards::Forward;
+                            } else {
+                                vehicle.movee(0, 1);
+                            }
+                        }
+                        Towards::Forward => {
+                            vehicle.movee(0, 1);
+                        }
+                    }
+                }
                 Direction::Right => {
                     match vehicle.toward {
                         Towards::Left => {
-                            if MIDILTE_POINT.0 == ((vehicle.x + 1) as i32) {
-                                vehicle.dir = Direction::Up;
+                            if MIDILTE_POINT.1 == ((vehicle.x - 1) as i32) {
+                                vehicle.dir = Direction::Down;
+                                vehicle.toward = Towards::Forward;
                             } else {
                                 vehicle.movee(-1, 0);
                             }
                         }
                         Towards::Right => {
-                            if MIDILTE_POINT.0 - (vehicle_width as i32) == ((vehicle.x + 1) as i32) {
-                                vehicle.dir = Direction::Down;
+                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.x - 1) as i32) {
+                                vehicle.dir = Direction::Up;
+                                vehicle.toward = Towards::Forward;
                             } else {
                                 vehicle.movee(-1, 0);
                             }
@@ -176,15 +178,17 @@ impl Traffic {
                 Direction::Left => {
                     match vehicle.toward {
                         Towards::Left => {
-                            if MIDILTE_POINT.0 == ((vehicle.x - 1) as i32) {
+                            if MIDILTE_POINT.1 - (vehicle_width as i32) == ((vehicle.x - 1) as i32) {
                                 vehicle.dir = Direction::Up;
+                                vehicle.toward = Towards::Forward;
                             } else {
                                 vehicle.movee(1, 0);
                             }
                         }
                         Towards::Right => {
-                            if MIDILTE_POINT.0 - (vehicle_width as i32) == ((vehicle.x - 1) as i32) {
+                            if MIDILTE_POINT.1 == ((vehicle.x - 1) as i32) {
                                 vehicle.dir = Direction::Down;
+                                vehicle.toward = Towards::Forward;
                             } else {
                                 vehicle.movee(1, 0);
                             }
