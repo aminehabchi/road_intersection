@@ -1,0 +1,1 @@
+/home/ahabchi/Desktop/road_intersection/target/debug/road_intersection: /home/ahabchi/Desktop/road_intersection/src/drawing.rs /home/ahabchi/Desktop/road_intersection/src/helprs.rs /home/ahabchi/Desktop/road_intersection/src/main.rs /home/ahabchi/Desktop/road_intersection/src/vehicles.rs
