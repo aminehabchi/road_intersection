@@ -63,27 +63,27 @@ fn main() -> Result<(), String> {
                     }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
-                    if now_in_millis() - last_click[0] > delay {
-                        traffic.add_vehicle(Direction::Up);
-                        last_click[0] = now_in_millis();
-                    }
-                }
-                Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
                     if now_in_millis() - last_click[1] > delay {
                         traffic.add_vehicle(Direction::Down);
                         last_click[1] = now_in_millis();
                     }
                 }
-                Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
-                    if now_in_millis() - last_click[2] > delay {
-                        traffic.add_vehicle(Direction::Left);
-                        last_click[2] = now_in_millis();
+                Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
+                    if now_in_millis() - last_click[0] > delay {
+                        traffic.add_vehicle(Direction::Up);
+                        last_click[0] = now_in_millis();
                     }
                 }
-                Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
+                Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
                     if now_in_millis() - last_click[3] > delay {
                         traffic.add_vehicle(Direction::Right);
                         last_click[3] = now_in_millis();
+                    }
+                }
+                Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
+                    if now_in_millis() - last_click[2] > delay {
+                        traffic.add_vehicle(Direction::Left);
+                        last_click[2] = now_in_millis();
                     }
                 }
                 _ => {}
