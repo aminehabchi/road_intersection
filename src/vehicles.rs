@@ -37,18 +37,18 @@ impl Vehicle {
         match dir {
             Direction::Up => {
                 x = started_points[0].x;
-                y = started_points[0].y;
+                y = started_points[0].y - (vehicle_width as i32);
             }
             Direction::Down => {
                 x = started_points[1].x;
-                y = started_points[1].y;
+                y = started_points[1].y + (vehicle_width as i32);
             }
             Direction::Right => {
-                x = started_points[3].x;
+                x = started_points[3].x + (vehicle_width as i32);
                 y = started_points[3].y;
             }
             Direction::Left => {
-                x = started_points[2].x;
+                x = started_points[2].x - (vehicle_width as i32);
                 y = started_points[2].y;
             }
         }

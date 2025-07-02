@@ -5,6 +5,7 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
+use std::time::{ SystemTime, UNIX_EPOCH };
 
 mod drawing;
 use drawing::*;
@@ -14,6 +15,13 @@ use vehicles::*;
 
 mod helprs;
 use helprs::*;
+
+fn now_in_millis() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("System time before UNIX EPOCH!")
+        .as_millis()
+}
 
 fn main() -> Result<(), String> {
     /*************************/
@@ -36,6 +44,9 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump().unwrap();
     let mut traffic: Traffic = Traffic::new();
 
+    let mut delay: u128 = (vehicle_width * 16 + (vehicle_width / 4) * 16) as u128;
+    let mut last_click: [u128; 4] = [0, 0, 0, 0];
+
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -44,20 +55,32 @@ fn main() -> Result<(), String> {
                 }
                 Event::KeyDown { keycode: Some(Keycode::R), .. } => {}
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
-                    let vehicle: Vehicle = Vehicle::new(Direction::Up);
-                    traffic.vehicles.push(vehicle);
+                    if now_in_millis() - last_click[0] > delay {
+                        let vehicle: Vehicle = Vehicle::new(Direction::Up);
+                        traffic.vehicles.push(vehicle);
+                        last_click[0] = now_in_millis();
+                    }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
-                    let vehicle: Vehicle = Vehicle::new(Direction::Down);
-                    traffic.vehicles.push(vehicle);
+                    if now_in_millis() - last_click[1] > delay {
+                        let vehicle: Vehicle = Vehicle::new(Direction::Down);
+                        traffic.vehicles.push(vehicle);
+                        last_click[1] = now_in_millis();
+                    }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
-                    let vehicle: Vehicle = Vehicle::new(Direction::Left);
-                    traffic.vehicles.push(vehicle);
+                    if now_in_millis() - last_click[2] > delay {
+                        let vehicle: Vehicle = Vehicle::new(Direction::Left);
+                        traffic.vehicles.push(vehicle);
+                        last_click[2] = now_in_millis();
+                    }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
-                    let vehicle: Vehicle = Vehicle::new(Direction::Right);
-                    traffic.vehicles.push(vehicle);
+                    if now_in_millis() - last_click[3] > delay {
+                        let vehicle: Vehicle = Vehicle::new(Direction::Right);
+                        traffic.vehicles.push(vehicle);
+                        last_click[3] = now_in_millis();
+                    }
                 }
                 _ => {}
             }
