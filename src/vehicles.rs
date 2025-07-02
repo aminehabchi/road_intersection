@@ -31,44 +31,20 @@ pub enum Direction {
 impl Vehicle {
     pub fn new(dir: Direction) -> Self {
         let started_points = started_points();
-        let mut x = 0;
-        let mut y = 0;
-        match dir {
-            Direction::Up => {
-                x = started_points[0].x;
-                y = started_points[0].y - (VEHICLE_WIDTH as i32);
-            }
-            Direction::Down => {
-                x = started_points[1].x;
-                y = started_points[1].y + (VEHICLE_WIDTH as i32);
-            }
-            Direction::Right => {
-                x = started_points[3].x + (VEHICLE_WIDTH as i32);
-                y = started_points[3].y;
-            }
-            Direction::Left => {
-                x = started_points[2].x - (VEHICLE_WIDTH as i32);
-                y = started_points[2].y;
-            }
-        }
-        let mut toward: Towards = Towards::Left;
-        let mut color = Color::RGB(0, 0, 255);
 
-        match random_between(0, 3) {
-            0 => {
-                toward = Towards::Left;
-                color = Color::RGB(0, 0, 255);
-            }
-            1 => {
-                toward = Towards::Right;
-                color = Color::RGB(255, 255, 0);
-            }
-            2 => {
-                toward = Towards::Forward;
-                color = Color::RGB(255, 0, 0);
-            }
-            _ => {}
-        }
+        let (x, y) = match dir {
+            Direction::Up => (started_points[0].x, started_points[0].y - (VEHICLE_WIDTH as i32)),
+            Direction::Down => (started_points[1].x, started_points[1].y + (VEHICLE_WIDTH as i32)),
+            Direction::Right => (started_points[3].x + (VEHICLE_WIDTH as i32), started_points[3].y),
+            Direction::Left => (started_points[2].x - (VEHICLE_WIDTH as i32), started_points[2].y),
+        };
+
+        let (toward, color) = match random_between(0, 2) {
+            0 => (Towards::Left, Color::RGB(0, 0, 255)), // Blue
+            1 => (Towards::Right, Color::RGB(255, 255, 0)), // Yellow
+            _ => (Towards::Forward, Color::RGB(255, 0, 0)), // Red
+        };
+
         Vehicle {
             color,
             x,
