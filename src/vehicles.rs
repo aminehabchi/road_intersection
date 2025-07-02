@@ -97,6 +97,7 @@ impl Vehicle {
 pub struct Traffic {
     pub vehicles: Vec<Vehicle>,
     pub light: Option<Direction>,
+    pub nbr_waiting_vehicle: (u8, u8, u8, u8),
 }
 
 impl Traffic {
@@ -104,6 +105,7 @@ impl Traffic {
         Traffic {
             vehicles: vec![],
             light: None,
+            nbr_waiting_vehicle: (0, 0, 0, 0),
         }
     }
     pub fn move_all(&mut self) {
@@ -115,6 +117,7 @@ impl Traffic {
                             Some(light) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
+                                self.nbr_waiting_vehicle.1 -= 1;
                                 vehicle.movee(0, -1);
                             }
                         }
@@ -128,6 +131,7 @@ impl Traffic {
                             Some(light) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
+                                self.nbr_waiting_vehicle.0 -= 1;
                                 vehicle.movee(0, 1);
                             }
                         }
@@ -141,6 +145,7 @@ impl Traffic {
                             Some(light) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
+                                self.nbr_waiting_vehicle.3 -= 1;
                                 vehicle.movee(-1, 0);
                             }
                         }
@@ -154,6 +159,7 @@ impl Traffic {
                             Some(light) => {}
                             None => {
                                 self.light = Some(vehicle.dir.clone());
+                                self.nbr_waiting_vehicle.2 -= 1;
                                 vehicle.movee(1, 0);
                             }
                         }

@@ -50,28 +50,32 @@ fn main() -> Result<(), String> {
                 }
                 Event::KeyDown { keycode: Some(Keycode::R), .. } => {}
                 Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
-                    if now_in_millis() - last_click[0] > delay {
+                    if now_in_millis() - last_click[0] > delay && traffic.nbr_waiting_vehicle.0 < 2 {
+                        traffic.nbr_waiting_vehicle.0 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Up);
                         traffic.vehicles.push(vehicle);
                         last_click[0] = now_in_millis();
                     }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
-                    if now_in_millis() - last_click[1] > delay {
+                    if now_in_millis() - last_click[1] > delay && traffic.nbr_waiting_vehicle.1 < 2 {
+                        traffic.nbr_waiting_vehicle.1 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Down);
                         traffic.vehicles.push(vehicle);
                         last_click[1] = now_in_millis();
                     }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
-                    if now_in_millis() - last_click[2] > delay {
+                    if now_in_millis() - last_click[2] > delay && traffic.nbr_waiting_vehicle.2 < 2 {
+                        traffic.nbr_waiting_vehicle.2 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Left);
                         traffic.vehicles.push(vehicle);
                         last_click[2] = now_in_millis();
                     }
                 }
                 Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
-                    if now_in_millis() - last_click[3] > delay {
+                    if now_in_millis() - last_click[3] > delay && traffic.nbr_waiting_vehicle.3 < 2 {
+                        traffic.nbr_waiting_vehicle.3 += 1;
                         let vehicle: Vehicle = Vehicle::new(Direction::Right);
                         traffic.vehicles.push(vehicle);
                         last_click[3] = now_in_millis();
@@ -80,7 +84,7 @@ fn main() -> Result<(), String> {
                 _ => {}
             }
         }
-
+        println!("{:?}", traffic.nbr_waiting_vehicle);
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
