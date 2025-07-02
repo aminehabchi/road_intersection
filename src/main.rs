@@ -23,7 +23,7 @@ fn main() -> Result<(), String> {
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
-        .window("SDL2 Window", WINDOW_WIDTH, WINDOW_HEIGHT)
+        .window("Road Intersection", WINDOW_WIDTH, WINDOW_HEIGHT)
         .position_centered()
         .build()
         .map_err(|e| e.to_string())?;
@@ -32,7 +32,7 @@ fn main() -> Result<(), String> {
         .into_canvas()
         .build()
         .map_err(|e| e.to_string())
-        .unwrap();
+        .unwrap(); 
 
     let mut event_pump = sdl_context.event_pump().unwrap();
     let mut traffic: Traffic = Traffic::new();
