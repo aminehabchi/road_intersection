@@ -16,6 +16,9 @@ use vehicles::*;
 mod helprs;
 use helprs::*;
 
+mod traffic;
+use traffic::*;
+
 fn main() -> Result<(), String> {
     /*************************/
 
@@ -43,75 +46,43 @@ fn main() -> Result<(), String> {
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => {
+                Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running;
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::R),
-                    ..
-                } => {
+                Event::KeyDown { keycode: Some(Keycode::R), .. } => {
                     if now_in_millis() - last_click[4] > delay {
                         let r = random_between(0, 3);
-
                         let dir = match r {
                             0 => Direction::Down,
                             1 => Direction::Left,
                             2 => Direction::Right,
                             _ => Direction::Up,
                         };
-                        let vehicle: Vehicle = Vehicle::new(dir);
-                        traffic.vehicles.push(vehicle);
+                        traffic.add_vehicle(dir);
+                        last_click[4] = now_in_millis();
                     }
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Up),
-                    ..
-                } => {
-                    if now_in_millis() - last_click[0] > delay && traffic.nbr_waiting_vehicle.0 < 6
-                    {
-                        traffic.nbr_waiting_vehicle.0 += 1;
-                        let vehicle: Vehicle = Vehicle::new(Direction::Up);
-                        traffic.vehicles.push(vehicle);
+                Event::KeyDown { keycode: Some(Keycode::Up), .. } => {
+                    if now_in_millis() - last_click[0] > delay {
+                        traffic.add_vehicle(Direction::Up);
                         last_click[0] = now_in_millis();
                     }
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Down),
-                    ..
-                } => {
-                    if now_in_millis() - last_click[1] > delay && traffic.nbr_waiting_vehicle.1 < 6
-                    {
-                        traffic.nbr_waiting_vehicle.1 += 1;
-                        let vehicle: Vehicle = Vehicle::new(Direction::Down);
-                        traffic.vehicles.push(vehicle);
+                Event::KeyDown { keycode: Some(Keycode::Down), .. } => {
+                    if now_in_millis() - last_click[1] > delay {
+                        traffic.add_vehicle(Direction::Down);
                         last_click[1] = now_in_millis();
                     }
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => {
-                    if now_in_millis() - last_click[2] > delay && traffic.nbr_waiting_vehicle.2 < 6
-                    {
-                        traffic.nbr_waiting_vehicle.2 += 1;
-                        let vehicle: Vehicle = Vehicle::new(Direction::Left);
-                        traffic.vehicles.push(vehicle);
+                Event::KeyDown { keycode: Some(Keycode::Left), .. } => {
+                    if now_in_millis() - last_click[2] > delay {
+                        traffic.add_vehicle(Direction::Left);
                         last_click[2] = now_in_millis();
                     }
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => {
-                    if now_in_millis() - last_click[3] > delay && traffic.nbr_waiting_vehicle.3 < 6
-                    {
-                        traffic.nbr_waiting_vehicle.3 += 1;
-                        let vehicle: Vehicle = Vehicle::new(Direction::Right);
-                        traffic.vehicles.push(vehicle);
+                Event::KeyDown { keycode: Some(Keycode::Right), .. } => {
+                    if now_in_millis() - last_click[3] > delay {
+                        traffic.add_vehicle(Direction::Right);
                         last_click[3] = now_in_millis();
                     }
                 }
@@ -151,25 +122,21 @@ fn main() -> Result<(), String> {
 
 pub fn draw_lights(
     lights: &Option<Direction>,
-    canvas: &mut Canvas<Window>,
+    canvas: &mut Canvas<Window>
 ) -> Result<(), Box<dyn std::error::Error>> {
     let light_size: u32 = 50;
     let lights_position = vec![
         (Direction::Up, ROAD_H - light_size, ROAD_V - light_size),
         (Direction::Right, WINDOW_WIDTH - ROAD_H, ROAD_V - light_size),
-        (
-            Direction::Down,
-            WINDOW_WIDTH - ROAD_H,
-            WINDOW_HEIGHT - ROAD_V,
-        ),
-        (Direction::Left, ROAD_H - light_size, WINDOW_HEIGHT - ROAD_V),
+        (Direction::Down, WINDOW_WIDTH - ROAD_H, WINDOW_HEIGHT - ROAD_V),
+        (Direction::Left, ROAD_H - light_size, WINDOW_HEIGHT - ROAD_V)
     ];
     for pos in lights_position {
         let rect = Rect::new(
             pos.1.try_into().unwrap(),
             pos.2.try_into().unwrap(),
             light_size,
-            light_size,
+            light_size
         );
         if Some(pos.0) == *lights {
             canvas.set_draw_color(Color::RGB(0, 255, 0)); //green

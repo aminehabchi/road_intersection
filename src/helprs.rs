@@ -39,7 +39,7 @@ pub fn handle_move_rigth(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             if vehicle.x + (VEHICLE_WIDTH as i32) == ROAD_H.try_into().unwrap() {
                 *light = None;
             }
-         
+
             vehicle.movee(-1, 0);
         }
     }
@@ -124,4 +124,8 @@ pub fn handle_move_up(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             vehicle.movee(0, 1);
         }
     }
+}
+
+pub fn check_safe_distance(current: i32, last: i32) -> bool {
+    last == 0 || ((last as f32) - (current as f32)).abs() > (SAFE_DISTANCE as f32)
 }
