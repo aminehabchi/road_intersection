@@ -109,6 +109,9 @@ impl Traffic {
         }
     }
     pub fn move_all(&mut self) {
+        let mut last_vehicle_pos = (0, 0, 0, 0);
+        let safe_distance: i32 = ((vehicle_width as f64) * 1.2) as i32;
+
         for vehicle in &mut self.vehicles {
             match vehicle.dir {
                 Direction::Down => {
@@ -122,8 +125,15 @@ impl Traffic {
                             }
                         }
                     } else {
-                        handle_move_down(vehicle, &mut self.light);
+                        if
+                            last_vehicle_pos.0 == 0 ||
+                            ((last_vehicle_pos.0 as f32) - (vehicle.y as f32)).abs() >
+                                (safe_distance as f32)
+                        {
+                            handle_move_down(vehicle, &mut self.light);
+                        }
                     }
+                    last_vehicle_pos.0 = vehicle.y;
                 }
                 Direction::Up => {
                     if vehicle.y + (vehicle_width as i32) == road_h.try_into().unwrap() {
@@ -136,8 +146,15 @@ impl Traffic {
                             }
                         }
                     } else {
-                        handle_move_up(vehicle, &mut self.light);
+                        if
+                            last_vehicle_pos.1 == 0 ||
+                            ((last_vehicle_pos.1 as f32) - (vehicle.y as f32)).abs() >
+                                (safe_distance as f32)
+                        {
+                            handle_move_up(vehicle, &mut self.light);
+                        }
                     }
+                    last_vehicle_pos.1 = vehicle.y;
                 }
                 Direction::Right => {
                     if vehicle.x == (window_width - road_h).try_into().unwrap() {
@@ -150,8 +167,15 @@ impl Traffic {
                             }
                         }
                     } else {
-                        handle_move_rigth(vehicle, &mut self.light);
+                        if
+                            last_vehicle_pos.2 == 0 ||
+                            ((last_vehicle_pos.2 as f32) - (vehicle.x as f32)).abs() >
+                                (safe_distance as f32)
+                        {
+                            handle_move_rigth(vehicle, &mut self.light);
+                        }
                     }
+                    last_vehicle_pos.2 = vehicle.x;
                 }
                 Direction::Left => {
                     if vehicle.x + (vehicle_width as i32) == road_h.try_into().unwrap() {
@@ -164,8 +188,15 @@ impl Traffic {
                             }
                         }
                     } else {
-                        handle_move_left(vehicle, &mut self.light);
+                        if
+                            last_vehicle_pos.3 == 0 ||
+                            ((last_vehicle_pos.3 as f32) - (vehicle.x as f32)).abs() >
+                                (safe_distance as f32)
+                        {
+                            handle_move_left(vehicle, &mut self.light);
+                        }
                     }
+                    last_vehicle_pos.3 = vehicle.x;
                 }
             }
         }
