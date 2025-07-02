@@ -39,12 +39,7 @@ pub fn handle_move_rigth(vehicle: &mut Vehicle, light: &mut Option<Direction>) {
             if vehicle.x + (VEHICLE_WIDTH as i32) == ROAD_H.try_into().unwrap() {
                 *light = None;
             }
-            // if vehicle.y + (vehicle_width as i32) == road_v.try_into().unwrap() {
-            //     *light = None;
-            // }
-            // if vehicle.x == (window_height - road_h).try_into().unwrap() {
-            //     *light = None;
-            // }
+         
             vehicle.movee(-1, 0);
         }
     }
