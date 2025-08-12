@@ -1,1 +1,0 @@
-/home/amine/project/road_intersection/target/debug/road_intersection: /home/amine/project/road_intersection/src/drawing.rs /home/amine/project/road_intersection/src/helprs.rs /home/amine/project/road_intersection/src/main.rs /home/amine/project/road_intersection/src/traffic.rs /home/amine/project/road_intersection/src/vehicles.rs
