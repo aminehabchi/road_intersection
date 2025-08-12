@@ -1,4 +1,5 @@
-extern crate sdl2;
+mod drawing;
+use drawing::*;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -7,8 +8,7 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use std::time::Duration;
 
-mod drawing;
-use drawing::*;
+
 
 mod vehicles;
 use vehicles::*;

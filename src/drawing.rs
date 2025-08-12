@@ -1,6 +1,5 @@
 extern crate sdl2;
 use sdl2::rect::Point;
-
 pub const WINDOW_WIDTH: u32 = 800;
 pub const WINDOW_HEIGHT: u32 = 800;
 pub const ROAD_WIDTH: u32 = 100;
